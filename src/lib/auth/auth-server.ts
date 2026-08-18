@@ -4,7 +4,13 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth/auth";
-import { NextResponse } from "next/server";
+
+export class UnauthorizedError extends Error {
+  constructor() {
+    super("Unauthorized");
+    this.name = "UnauthorizedError";
+  }
+}
 
 export async function getSession() {
   return auth.api.getSession({
@@ -32,14 +38,7 @@ export async function requireApiUser() {
   const session = await getSession();
 
   if (!session?.user) {
-    return NextResponse.json(
-      {
-        error: "Unauthorized",
-      },
-      {
-        status: 401,
-      },
-    );
+    throw new UnauthorizedError();
   }
 
   return session.user;
