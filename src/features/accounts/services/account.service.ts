@@ -26,7 +26,7 @@ export async function getAccountsForUser(userId: string) {
   return await db
     .select()
     .from(accounts)
-    .where(eq(accounts.userId, userId))
+    .where(and(eq(accounts.userId, userId), eq(accounts.status, "ACTIVE")))
     .orderBy(asc(accounts.name))
     .limit(20);
 
