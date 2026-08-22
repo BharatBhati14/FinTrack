@@ -11,6 +11,7 @@ import {
 import { users } from "./users";
 import { accounts } from "./accounts";
 import { categories } from "./categories";
+import { transfers } from "./transfers";
 
 // 1. Define Enum for Transaction Type
 export const transactionTypeEnum = pgEnum("transaction_type", [
@@ -54,7 +55,10 @@ export const transactions = pgTable(
     }).notNull(),
 
     // Nullable UUID to link two legs of a TRANSFER (e.g., HDFC outflow <-> SBI inflow)
-    transferId: uuid("transfer_id"),
+    transferId: uuid("transfer_id").references(() => transfers.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
 
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
