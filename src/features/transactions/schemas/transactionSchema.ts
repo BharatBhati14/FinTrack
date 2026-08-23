@@ -66,7 +66,14 @@ export const updateTransactionSchema = z
     message: "At least one field must be provided.",
   });
 
-export type CreateTransactionInput = z.infer<typeof createTransactionSchema>;
-export type CreateTransactionOutput = z.output<typeof createTransactionSchema>;
+// export type CreateTransactionInput = z.input<typeof createTransactionSchema>;
+// export type CreateTransactionOutput = z.output<typeof createTransactionSchema>;
+export type CreateTransactionFormInput = z.input<
+  typeof createTransactionSchema
+>;
+
+// Validated/output type
+export type CreateTransactionInput = z.output<typeof createTransactionSchema>;
+
 export type UpdateTransactionInput = z.infer<typeof updateTransactionSchema>;
 export type UpdateTransactionOutput = z.output<typeof updateTransactionSchema>;

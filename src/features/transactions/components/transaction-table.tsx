@@ -155,6 +155,18 @@ export function TransactionTable({
                   />
 
                   <DropdownMenuContent align="end">
+                    {transaction.type === "TRANSFER" && (
+                      <>
+                        <DropdownMenuItem
+                          disabled
+                          className="text-xs opacity-100"
+                        >
+                          Transfer transactions are managed as a pair and can’t
+                          be edited or deleted.
+                        </DropdownMenuItem>
+                      </>
+                    )}
+
                     {transaction.type !== "TRANSFER" && (
                       <>
                         <DropdownMenuItem onClick={() => onEdit(transaction)}>

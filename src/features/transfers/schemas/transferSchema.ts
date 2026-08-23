@@ -22,7 +22,7 @@ export const createTransferSchema = z
       .nullable()
       .optional(),
 
-    transferDate: z.date({
+    transferDate: z.coerce.date({
       error: "Transfer date is required.",
     }),
   })
@@ -31,4 +31,7 @@ export const createTransferSchema = z
     path: ["toAccountId"],
   });
 
-export type CreateTransferInput = z.infer<typeof createTransferSchema>;
+// export type CreateTransferInput = z.infer<typeof createTransferSchema>;
+export type CreateTransferFormInput = z.input<typeof createTransferSchema>;
+
+export type CreateTransferInput = z.output<typeof createTransferSchema>;

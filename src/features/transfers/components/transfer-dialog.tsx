@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createTransferSchema,
   type CreateTransferInput,
+  type CreateTransferFormInput,
 } from "../schemas/transferSchema";
 
 import { createTransfer } from "../services/client.service";
@@ -65,7 +66,7 @@ export function TransferDialog({
 }: TransferDialogProps) {
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const form = useForm<CreateTransferInput>({
+  const form = useForm<CreateTransferFormInput, unknown, CreateTransferInput>({
     resolver: zodResolver(createTransferSchema),
     defaultValues: {
       fromAccountId: "",
@@ -151,7 +152,22 @@ export function TransferDialog({
               }}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select source account" />
+                <SelectValue placeholder="Select source account">
+                  {(() => {
+                    const selectedAccount = accounts.find(
+                      (account) => account.id === form.watch("fromAccountId"),
+                    );
+
+                    return selectedAccount ? (
+                      <div className="flex items-center gap-2">
+                        <span>{selectedAccount.name}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {selectedAccount.currency}
+                        </span>
+                      </div>
+                    ) : null;
+                  })()}
+                </SelectValue>
               </SelectTrigger>
 
               <SelectContent>
@@ -191,7 +207,22 @@ export function TransferDialog({
               }}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select destination account" />
+                <SelectValue placeholder="Select destination account">
+                  {(() => {
+                    const selectedAccount = accounts.find(
+                      (account) => account.id === form.watch("toAccountId"),
+                    );
+
+                    return selectedAccount ? (
+                      <div className="flex items-center gap-2">
+                        <span>{selectedAccount.name}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {selectedAccount.currency}
+                        </span>
+                      </div>
+                    ) : null;
+                  })()}
+                </SelectValue>
               </SelectTrigger>
 
               <SelectContent>
@@ -241,7 +272,10 @@ export function TransferDialog({
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
 
-                    {format(form.watch("transferDate"), "PPP")}
+                    {format(
+                      form.watch("transferDate") as Date | string | number,
+                      "PPP",
+                    )}
                   </Button>
                 }
               />
@@ -249,7 +283,7 @@ export function TransferDialog({
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={form.watch("transferDate")}
+                  selected={form.watch("transferDate") as Date | undefined}
                   onSelect={(date) => {
                     if (date) {
                       form.setValue("transferDate", date, {

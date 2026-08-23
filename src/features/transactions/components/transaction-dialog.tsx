@@ -8,11 +8,31 @@ import { zodResolver } from "@hookform/resolvers/zod";
 //   createTransactionSchema,
 //   type CreateTransactionInput,
 // } from "../schemas/transactionSchema";
+// import {
+//     createTransactionSchema,
+//   type CreateTransactionInput,
+//   type CreateTransactionOutput,
+// } from "../schemas/transactionSchema";
+// import {
+//   CreateTransactionOutput,
+//   createTransactionSchema,
+//   updateTransactionSchema,
+//   type CreateTransactionInput,
+//   type UpdateTransactionInput,
+// } from "../schemas/transactionSchema";
+
+// import {
+//   createTransactionSchema,
+//   type CreateTransactionInput,
+//   type CreateTransactionOutput,
+// } from "../schemas/transactionSchema";
+
 import {
-    createTransactionSchema,
+  createTransactionSchema,
+  type CreateTransactionFormInput,
   type CreateTransactionInput,
-  type CreateTransactionOutput,
 } from "../schemas/transactionSchema";
+
 import {
   createTransaction,
   updateTransaction,
@@ -85,7 +105,13 @@ export function TransactionDialog({
   const editing = Boolean(transaction);
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const form = useForm<CreateTransactionInput>({
+  // const form = useForm<CreateTransactionInput>({
+  //   resolver: zodResolver(createTransactionSchema),
+  const form = useForm<
+    CreateTransactionFormInput,
+    unknown,
+    CreateTransactionInput
+  >({
     resolver: zodResolver(createTransactionSchema),
     defaultValues: {
       accountId: "",
@@ -115,7 +141,7 @@ export function TransactionDialog({
   const selectedTransactionDate = useWatch({
     control: form.control,
     name: "transactionDate",
-  });
+  }) as Date | undefined;
 
   useEffect(() => {
     if (!open) return;
@@ -152,7 +178,9 @@ export function TransactionDialog({
 
     try {
       if (editing && transaction) {
-        await updateTransaction(transaction.id, values);
+        const { type, ...updateValues } = values;
+
+        await updateTransaction(transaction.id, updateValues);
       } else {
         await createTransaction(values);
       }
@@ -188,42 +216,48 @@ export function TransactionDialog({
             </div>
           )}
 
-          <div className="space-y-2">
-            <Label>Type</Label>
+          {!editing && (
+            <div className="space-y-2">
+              <Label>Type</Label>
 
-            <Select
-              value={selectedType}
-              onValueChange={(value) => {
-                if (!value) return;
+              <Select
+                value={selectedType}
+                onValueChange={(value) => {
+                  if (!value) return;
 
-                form.setValue(
-                  "type",
-                  value as "INCOME" | "EXPENSE" | "TRANSFER",
-                  {
+                  form.setValue(
+                    "type",
+                    value as "INCOME" | "EXPENSE" | "TRANSFER",
+                    {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    },
+                  );
+
+                  form.setValue("categoryId", null, {
                     shouldDirty: true,
                     shouldValidate: true,
-                  },
-                );
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
+                  });
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
 
-              <SelectContent>
-                <SelectItem value="EXPENSE">Expense</SelectItem>
+                <SelectContent>
+                  <SelectItem value="EXPENSE">Expense</SelectItem>
 
-                <SelectItem value="INCOME">Income</SelectItem>
-              </SelectContent>
-            </Select>
+                  <SelectItem value="INCOME">Income</SelectItem>
+                </SelectContent>
+              </Select>
 
-            {form.formState.errors.type && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.type.message}
-              </p>
-            )}
-          </div>
-
+              {form.formState.errors.type && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.type.message}
+                </p>
+              )}
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="accountId">Account</Label>
 
