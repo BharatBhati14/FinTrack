@@ -50,7 +50,7 @@ export function SpendingChart({ data }: Props) {
               No expenses for this period.
             </div>
           ) : (
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer minWidth="1px" width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={chartData}
