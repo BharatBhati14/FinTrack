@@ -108,8 +108,8 @@ export function Navbar({ user }: NavbarProps) {
 
         {/* App name */}
         <Link
-          href="/dashboard"
-          className="shrink-0 text-lg font-semibold tracking-tight"
+          href="/"
+          className="shrink-0 text-[25px] font-semibold tracking-tight"
         >
           FinTrack
         </Link>
