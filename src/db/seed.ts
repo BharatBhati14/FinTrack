@@ -1,6 +1,7 @@
 import "dotenv/config";
 
-import { seedDb, pool } from "./seed-db";
+import { seedDb, client } from "./seed-db";
+
 import { categories } from "./schema/categories";
 
 const systemCategories = [
@@ -13,7 +14,6 @@ const systemCategories = [
   { name: "Education", type: "EXPENSE" as const },
   { name: "Travel", type: "EXPENSE" as const },
   { name: "Other", type: "EXPENSE" as const },
-
   { name: "Salary", type: "INCOME" as const },
   { name: "Freelance", type: "INCOME" as const },
   { name: "Business", type: "INCOME" as const },
@@ -45,5 +45,5 @@ seed()
     process.exit(1);
   })
   .finally(async () => {
-    await pool.end();
+    await client.end();
   });
